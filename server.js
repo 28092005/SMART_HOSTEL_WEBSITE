@@ -41,6 +41,17 @@ app.use('/api/stats', require('./routes/stats'));
 app.use('/api/users', require('./routes/users'));
 
 // Serve frontend
+// Health check — required for CI/CD pipeline smoke test
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    app: 'Smart Hostel Website',
+    uptime: Math.floor(process.uptime()),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
+// Serve frontend
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
